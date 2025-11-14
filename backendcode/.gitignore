@@ -1,0 +1,53 @@
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.local
+.env.*.local
+logs/
+*.log
+pids/
+*.pid
+*.seed
+*.pid.lock
+coverage/
+dist/
+build/
+tmp/
+temp/
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+.DS_Store
+Thumbs.db
+*.tsbuildinfo
+uploads/
+public/uploads/
+.cache/
+# Node.js dependencies
+node_modules/
+
+# Build outputs
+build/
+dist/
+.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Misc
+*.log
