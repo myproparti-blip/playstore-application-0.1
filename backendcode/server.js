@@ -49,6 +49,25 @@ app.use("/api/agents", agentRoutes);
 app.use("/api/advertisements", advertisementRoutes);
 app.use("/api/locations", locationRoutes);
 
+// ✅ ADD THIS ROOT ROUTE
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "🚀 Backend API Server is Running!",
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      auth: "/api/auth",
+      consultants: "/api/consultants", 
+      properties: "/api/properties",
+      payments: "/api/payments",
+      agents: "/api/agents",
+      advertisements: "/api/advertisements",
+      locations: "/api/locations"
+    },
+    documentation: "Check API docs for available endpoints"
+  });
+});
+
 app.get("/api", (req, res) => {
   res.json({
     success: true,
@@ -59,7 +78,6 @@ app.get("/api", (req, res) => {
 
 // ===== Error Handler =====
 app.use(errorHandler);
-
 // 🚫 REMOVE app.listen()
 // Instead export app for Vercel Serverless
 export default app;
