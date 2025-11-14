@@ -5,25 +5,32 @@ const getToken = () => localStorage.getItem("authToken");
 const setToken = (token) => localStorage.setItem("authToken", token);
 const getRefreshToken = () => localStorage.getItem("refreshToken");
 
-const PC_LAN_IP = "192.168.29.194";
-const LAN_API = `http://${PC_LAN_IP}:5000/api`;
+// Smart API URL detection using environment variables
+const getAPIBaseURL = () => {
+  if (process.env.NODE_ENV === 'production') {
+    return process.env.REACT_APP_API_URL_PRODUCTION || "https://playstore-application-0-1-gttk.vercel.app/api";
+  }
+  
+  const hostname = window.location.hostname;
+  
+  // Development environments
+  if (hostname === "localhost") {
+    return process.env.REACT_APP_API_URL_LOCAL || "http://localhost:5000/api";
+  } else if (hostname.startsWith("192.")) {
+    return process.env.REACT_APP_API_URL_LAN || `http://${hostname}:5000/api`;
+  }
+  
+  // Fallback to production
+  return process.env.REACT_APP_API_URL_PRODUCTION || "https://playstore-application-0-1-gttk.vercel.app/api";
+};
 
-let API_URL;
-const hostname = window.location.hostname;
+const API_URL = getAPIBaseURL();
 
-if (hostname === "localhost") {
-  API_URL = "http://localhost:5000/api";
-} else if (
-  hostname.startsWith("192.") ||
-  hostname.startsWith("10.") ||
-  hostname.startsWith("172.")
-) {
-  API_URL = LAN_API;
-} else if (hostname.includes("vercel.app")) {
-  API_URL = "https://playstore-application-xxq1.vercel.app/api";
-} else {
-  API_URL = LAN_API;
-}
+console.log("🔧 API Configuration:", {
+  environment: process.env.NODE_ENV,
+  hostname: window.location.hostname,
+  apiURL: API_URL
+});
 
 const api = axios.create({
   baseURL: API_URL,
@@ -37,6 +44,8 @@ api.interceptors.request.use(
     const token = getToken();
     if (token) config.headers.Authorization = `Bearer ${token}`;
     if (config.data instanceof FormData) delete config.headers["Content-Type"];
+    
+    console.log(`🚀 API Request: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
     return config;
   },
   (error) => Promise.reject(error)
@@ -55,10 +64,15 @@ const processQueue = (error, token = null) => {
 };
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log(`✅ API Success: ${response.config.url}`, response.status);
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
     const status = error.response?.status;
+
+    console.log(`❌ API Error: ${originalRequest?.url}`, status, error.message);
 
     // If unauthorized
     if (status === 401 && !originalRequest._retry) {
