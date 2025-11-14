@@ -36,7 +36,7 @@ const appContainerStyle = {
   boxShadow: "0 0 10px rgba(0,0,0,0.1)",
   position: "relative",
   overflow: "hidden",
-  backgroundColor: "#000000ff",
+  backgroundColor: "#a4a4a4",
 };
 
 // ===== Main Tab Routes =====
